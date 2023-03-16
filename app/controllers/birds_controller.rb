@@ -9,8 +9,10 @@ class BirdsController < ApplicationController
 
   # POST /birds
   def create
-    bird = Bird.create(bird_params)
+    bird = Bird.create!(bird_params)
     render json: bird, status: :created
+  rescue ActiveRecord::RecordInvalid => haha
+    render json: {errors: haha.record.errors}, status: 422
   end
 
   # GET /birds/:id
@@ -22,8 +24,10 @@ class BirdsController < ApplicationController
   # PATCH /birds/:id
   def update
     bird = find_bird
-    bird.update(bird_params)
+    bird.update!(bird_params)
     render json: bird
+  rescue ActiveRecord::RecordInvalid => invalid
+    render json: {errors: invalid.record.errors.full_messages[0]}, status: 422
   end
 
   # DELETE /birds/:id
